@@ -1,11 +1,11 @@
 import math
 
-from app import const
+from common import const
 from app.game import game
 
 
 def round_up(prev_points):
-    """小数第二位以下について、ポイントが増える方向へ調整して小数第一位までとする。"""
+    """小数第二位以下について、ポイントが増える方向へ調整して小数第一位までとする"""
     adjusted_points = math.ceil(prev_points * 10) / 10
     return adjusted_points
 
@@ -24,6 +24,7 @@ def simulate_phase(
     phase: str,
     schedule: list | None = None,
 ):
+    """スケジュールに基づいてフェーズを実行する"""
     # セミファイナル・ファイナルの場合は、前フェーズの持越ポイントをポイントに加算する
     if phase in (const.SEMIFINAL_PHASE, const.FINAL_PHASE):
         for _, team_data in teams.items():

@@ -2,7 +2,7 @@ from collections import Counter
 
 import pytest
 
-from app import const
+from common import const
 from app.schedule import create_schedule
 
 REGULAR_TEAM_NAMES = {
@@ -47,6 +47,7 @@ def test_create_schedule(games_per_team, team_count, team_names):
     expected_counts = {team: cards_per_team for team in team_names}
     assert actual_counts == expected_counts
 
-    # 同一カード内にチームの重複が無いか
+    # 1つのカード内に4チーム入っているか
     assert all(len(card) == const.PLAYER_COUNT for card in result_schedule)
+    # 1つのカード内に重複したチームが入っていないか
     assert all(len(set(card)) == len(card) for card in result_schedule)

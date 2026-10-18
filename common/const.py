@@ -49,7 +49,7 @@ TOTAL_SCORE = 100000
 # 得点の平均
 SCORE_MEAN = 25000
 # 得点の標準偏差
-SCORE_STANDARD_DEVIATION = 18000
+SCORE_STANDARD_DEVIATION = 17000
 # 得点の最小単位（100点刻み）
 SCORE_UNIT = 100
 
@@ -62,6 +62,6 @@ RETURN_SCORE = 30000
 # 動作確認用
 # --------------------------
 # 直接実行時の半荘数（動作確認用）
-DEBUG_GAME_COUNT = 4
+DEBUG_GAME_COUNT = 2
 # 直接実行時のシーズン数（動作確認用）
-DEBUG_SEASON_COUNT = 10
+DEBUG_SEASON_COUNT = 2

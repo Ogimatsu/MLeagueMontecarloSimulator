@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from app import const
+from common import const
 from app.simulate_phase import carry_over_points, round_up, simulate_phase
 
 
