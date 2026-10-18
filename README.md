@@ -14,27 +14,129 @@
 
 ---
 
+## 使い方
+
+[セットアップ](#セットアップ手順ローカル開発環境)後、仮想環境を有効にしてプロジェクトのルートディレクトリで実行します。
+
+```powershell
+python -m app.main
+```
+
+指定シーズン数のシミュレーション結果が、カレントディレクトリに`mleague_simulate_result_<日時>.csv`という名前で保存されます。
+文字コードはUTF-8（BOM付き）で、未進出フェーズの値は空欄になります。
+
+---
+
 ## ディレクトリ構成（抜粋）
 
 ```
-MLeagueMontecarloSimulation/
+MLeagueMontecarloSimulator/
 ├── app/                          # シミュレーション本体
-│   ├── const.py                  # 定数
+│   ├── __init__.py
 │   ├── game.py                   # 1半荘の処理
 │   ├── main.py                   # シーズンシミュレーション
 │   ├── schedule.py               # 対戦スケジュールの作成
 │   └── simulate_phase.py         # フェーズのシミュレーション
+├── common/                       # 共通処理
+│   └── const.py                  # 定数
+├── create_csv/                   # CSV出力処理
+│   ├── __init__.py
+│   └── create_csv.py             # シミュレーション結果のCSV出力
 ├── docs/
 │   └── specification.md          # 仕様書
+├── output/                       # 作成したCSVファイルの出力場所
 ├── test/                         # テストコード
-│   ├── test_game.py
-│   ├── test_main.py
-│   ├── test_schedule.py
-│   └── test_simulate_phase.py
+│   ├── __init__.py
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── test_game.py
+│   │   ├── test_main.py
+│   │   ├── test_schedule.py
+│   │   └── test_simulate_phase.py
+│   ├── create_csv/
+│   │   ├── __init__.py
+│   │   └── test_create_csv.py
+│   └── test_data/                # テスト用データ
+│       ├── app/
+│       │   └── test_data_main.py
+│       └── create_csv/
+│           └── test_data_create_csv.py
+├── temp_csv/                     # CSVファイルの一時保存用
+├── .gitignore                    # Gitの管理対象外ファイル設定
 ├── .pre-commit-config.yaml       # コミット前の自動チェック設定
 ├── AGENTS.md                     # AIへの作業指示
 └── README.md                     # プロジェクトの説明
 ```
+
+---
+
+## セットアップ手順（ローカル開発環境）
+
+「使用技術」に記載したバージョンのPythonとGitを用意してください。以下はWindows PowerShellでの手順です。
+シミュレーション本体はPython標準ライブラリのみを使用し、開発時にはpytestとpre-commitを追加します。
+
+### リポジトリと仮想環境の準備
+
+```powershell
+git clone https://github.com/Ogimatsu/MLeagueMontecarloSimulator.git
+cd MLeagueMontecarloSimulator
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+以降のコマンドは、仮想環境を有効にしてプロジェクトのルートディレクトリで実行します。
+既にクローン済みの場合は、クローンを省略してください。
+
+macOS/Linuxでは、仮想環境の有効化に次のコマンドを使用します。
+
+```bash
+source .venv/bin/activate
+```
+
+### 開発用ツールの導入
+
+```powershell
+python -m pip install pytest pre-commit
+pre-commit install
+```
+
+pre-commitのpytestフックは`.venv/Scripts/python.exe`を使用するWindows向けの設定です。
+macOS/Linuxでは、その実行パスを環境に合わせて変更する必要があります。
+
+---
+
+## 開発者向け情報
+
+### 仕様と設定
+
+- 計算ルール・用語・結果形式は[仕様書](docs/specification.md)を参照してください。
+- シミュレーションの定数は`common/const.py`にあります。
+- 実行シーズン数は`SEASON_COUNT`（現在は10,000）で指定します。
+
+### テスト
+
+全テストを実行します。
+
+```powershell
+python -m pytest test
+```
+
+対象のファイルを指定して実行することもできます。`-s`を付けると、テスト中の標準出力を表示します。
+
+```powershell
+python -m pytest -s test/app/test_main.py
+```
+
+### コミット前のチェック
+
+[.pre-commit-config.yaml](.pre-commit-config.yaml)には、isort（Black互換設定）、Black、pytest、末尾空白・ファイル末尾改行・YAML構文・マージ競合のチェックを設定しています。
+`pre-commit install`後はコミット時に自動実行されます。全ファイルを手動でチェックする場合は、次を実行します。
+
+```powershell
+pre-commit run --all-files
+```
+
+isort、Black、空白・改行のフックは対象ファイルを自動修正する場合があります。
 
 ---
 
@@ -43,17 +145,3 @@ MLeagueMontecarloSimulation/
 - main: 本番用、常にデプロイ可能な状態
 - feature/〇〇: 機能ごとの開発ブランチ（例：feature/search-function）
 - コミットメッセージはプレフィックス付きで明確に（例：fix:, feat:）
-
----
-
-## 主な開発環境上での実行コマンド
-
-- ツールの実行
-```
-python -m app.main
-```
-
-- テストコードの実行
-```
-python -m pytest -s test\test_main.py
-```

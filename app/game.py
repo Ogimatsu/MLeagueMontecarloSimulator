@@ -1,10 +1,10 @@
 import random
 
-from app import const
+from common import const
 
 
 def game(teams: dict):
-    """1半荘を実行し、チームごとのMリーグポイントを返す。"""
+    """1半荘を実行し、チームごとのMリーグポイントを返す"""
     # 着順を決める
     remaining_teams = teams.copy()
     ranking = {}

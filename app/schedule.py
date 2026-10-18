@@ -1,10 +1,11 @@
 import random
 from collections import Counter
 
-from app import const
+from common import const
 
 
 def create_schedule(games_per_team, team_count, team_names):
+    """レギュラー・セミファイナルのスケジュールを作成する"""
     scheduled_card_counts = Counter()
 
     # 1チーム当たりの必要なカード数

@@ -1,11 +1,16 @@
-from app import const
+from common import const
 from app.schedule import create_schedule
 from app.simulate_phase import carry_over_points, simulate_phase
+from create_csv.create_csv import create_csv
 from copy import deepcopy
-
+from time import perf_counter
+from pathlib import Path
+from datetime import datetime
 
 def main():
     """指定シーズン数を実行してその結果を返す"""
+    start_time = perf_counter()
+
     team_names = [
         "Ａチーム",
         "Ｂチーム",
@@ -23,6 +28,7 @@ def main():
         name: {
             "weight": 1.0,
             "point": 0.0,
+            "overall_rank": None,
             "regular_end_rank": None,
             "regular_end_points": None,
             "semifinal_start_points": None,
@@ -55,7 +61,7 @@ def main():
     )
 
     # 全シーズンを格納
-    result = []
+    simulate_result = []
 
     # ここから指定シーズン分実行する
     for season_number in range(1, const.SEASON_COUNT + 1):
@@ -112,17 +118,30 @@ def main():
             dict(regular_result[-(const.REGULAR_TEAM_COUNT - const.SEMIFINAL_TEAM_COUNT):])
         )
 
-        # シーズン結果に関係しないweight、point欄は削除する
         for _, team_data in team_results.items():
+            # シーズン結果に関係しないweight、point欄は削除する
             del team_data["weight"]
             del team_data["point"]
 
-        season_result["teams"] = team_results
-        result.append(season_result)
+            # 総合順位を追加する
+            if team_data["semifinal_end_points"] is None and team_data["final_end_points"] is None:
+                team_data["overall_rank"] = team_data["regular_end_rank"]
+            elif team_data["final_end_points"] is None:
+                team_data["overall_rank"] = team_data["semifinal_end_rank"]
+            else:
+                team_data["overall_rank"] = team_data["final_end_rank"]
 
-    print(len(result))
-    return result
+        season_result["teams"] = team_results
+        simulate_result.append(season_result)
+
+    print(f"指定シーズン取得処理時間: {perf_counter() - start_time:.3f}秒")
+    return simulate_result
 
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    project_root = Path(__file__).resolve().parent.parent
+    now = datetime.now()
+    file_name = f"m_league_simulate_result_{now.strftime('%Y%m%d%H%M%S%f')}.csv"
+    output_path = project_root / "output" / file_name
+    create_csv(result, output_path)

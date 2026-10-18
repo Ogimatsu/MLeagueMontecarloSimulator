@@ -8,3 +8,6 @@ __pycache__/
 
 # Pytestキャッシュ
 .pytest_cache
+
+# 出力されるCSVファイル
+*.csv

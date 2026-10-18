@@ -117,15 +117,15 @@ MVPでは、対戦する4チームの重みを同じ値として扱い、着順�
 得点候補は暫定的に以下の正規分布を利用する。
 
 - 平均: 25,000点
-- 標準偏差: 18,000点
+- 標準偏差: 17,000点
 
 平均25,000点は得点合計100,000点から決まる制約である。
-標準偏差18,000点はシミュレーション上の仮定であり、
-Mリーグ公式ルールではない。
+標準偏差17,000点はシミュレーション上の仮定である。
 
-得点の上下限については実装時に決定する。
+得点の上下限については、2025-26シーズンまでの記録をもとに、下記の通りとする。
 
-将来的に実データを用いて分布を調整する可能性がある。
+- 得点の上限：120000点
+- 得点の下限：-60000点
 
 
 ## 6. 同点の扱い
@@ -207,66 +207,109 @@ simulate_phase()
 
 - シーズン
 - チーム
+- 総合順位
 - レギュラー順位
 - レギュラーポイント
+- セミファイナル開始時の持ち越しポイント
 - セミファイナル順位
 - セミファイナルポイント
+- ファイナル開始時の持ち越しポイント
 - ファイナル順位
 - ファイナルポイント
 
 進出していないフェーズについては、
 欠損値として扱える構造とする。
 
-また、レスポンス値はシーズンのリストとし、各シーズンにシーズン番号とチームごとの成績を含める。
-進出していないフェーズの成績は `null` とする。
+また、戻り値はシーズンの辞書を要素とするリストとし、各シーズンにシーズン番号（`season`）とチーム名をキーとする成績の辞書（`teams`）を含める。
+`semifinal_start_points` と `final_start_points` は、それぞれセミファイナルとファイナル開始時の持ち越しポイントを表す。
+進出していないフェーズの成績と持ち越しポイントは `None` とする。
 
 また、フェーズ内で同店がある場合は内部の順序で順位を決めるものとする。
 
-```
+総合順位の定義は以下のとおりとする。
+- 総合1～4位：ファイナル終了時の順位
+- 総合5～6位：セミファイナル敗退チームで、セミファイナル終了時の順位
+- 総合7～10位：ファイナル敗退チームで、ファイナル終了時の順位
+
+```python
 [
   {
     "season": 1,
     "teams": {
-      "チームA": {
-        "regular_end_rank": 1,
-        "regular_end_points": 697.3,
-        "semifinal_end_rank": 1,
-        "semifinal_end_points": 446.6,
+      "Ｉチーム": {
+        "overall_rank": 1,
+        "regular_end_rank": 3,
+        "regular_end_points": 92.1,
+        "semifinal_start_points": 46.1,
+        "semifinal_end_rank": 3,
+        "semifinal_end_points": 199.5,
+        "final_start_points": 99.8,
         "final_end_rank": 1,
-        "final_end_points": 268.8
+        "final_end_points": 267.5
       },
-      "チームB": {
+      "Ｃチーム": {
+        "overall_rank": 2,
+        "regular_end_rank": 1,
+        "regular_end_points": 883.8,
+        "semifinal_start_points": 441.9,
+        "semifinal_end_rank": 2,
+        "semifinal_end_points": 377.2,
+        "final_start_points": 188.6,
+        "final_end_rank": 2,
+        "final_end_points": 257.9
+      },
+      "Ｂチーム": {
+        "overall_rank": 7,
         "regular_end_rank": 7,
         "regular_end_points": 100.0,
-        "semifinal_end_rank": null,
-        "semifinal_end_points": null,
-        "final_end_rank": null,
-        "final_end_points": null
+        "semifinal_start_points": None,
+        "semifinal_end_rank": None,
+        "semifinal_end_points": None,
+        "final_start_points": None,
+        "final_end_rank": None,
+        "final_end_points": None
       }
     }
   },
   {
     "season": 2,
     "teams": {
-      "チームA": {
+      "Ａチーム": {
+        "overall_rank": 3,
         "regular_end_rank": 1,
         "regular_end_points": 1115.5,
+        "semifinal_start_points": 557.8,
         "semifinal_end_rank": 1,
         "semifinal_end_points": 714.8,
+        "final_start_points": 357.4,
         "final_end_rank": 3,
         "final_end_points": 282.9
       },
-      "チームB": {
+      "Ｂチーム": {
+        "overall_rank": 2,
         "regular_end_rank": 2,
         "regular_end_points": 481.2,
+        "semifinal_start_points": 240.6,
         "semifinal_end_rank": 2,
         "semifinal_end_points": 626.7,
+        "final_start_points": 313.4,
         "final_end_rank": 2,
         "final_end_points": 288.6
       }
     }
   }
 ]
+```
+
+上記の形で取得した結果は以下の形式でcsvファイルとして出力する。
+戻り値がNoneの項目は空欄とする。
+```csv
+season,team,overall_rank,regular_end_rank,regular_end_points,semifinal_start_points,semifinal_end_rank,semifinal_end_points,final_start_points,final_end_rank,final_end_points
+1,Ｉチーム,1,3,92.1,46.1,3,199.5,99.8,1,267.5
+1,Ｃチーム,2,1,883.8,441.9,2,377.2,188.6,2,257.9
+1,Ｂチーム,7,7,100.0,,,,,,
+2,Ａチーム,3,1,1115.5,557.8,1,714.8,357.4,3,282.9
+2,Ｂチーム,2,2,481.2,240.6,2,626.7,313.4,2,288.6
 ```
 
 ## 11. 複数シーズンシミュレーション
