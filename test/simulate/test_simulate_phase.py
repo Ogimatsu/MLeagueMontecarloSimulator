@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from common import const
-from app.simulate_phase import carry_over_points, round_up, simulate_phase
+from simulate.simulate_phase import carry_over_points, round_up, simulate_phase
 
 
 @pytest.mark.parametrize(
@@ -130,11 +130,11 @@ def test_simulate_phase(teams, phase, schedule, expected):
     teams = deepcopy(teams)
     with (
         patch(
-            "app.simulate_phase.game",
+            "simulate.simulate_phase.game",
             side_effect=GAME_RESULTS,
         ),
         patch(
-            "app.simulate_phase.const.FINAL_GAMES_PER_TEAM",
+            "simulate.simulate_phase.const.FINAL_GAMES_PER_TEAM",
             2,
         ),
     ):
@@ -182,7 +182,7 @@ def test_simulate_phase_with_different_card_teams(phase, start_points, expected)
         {"A": -10.0, "B": -20.0, "E": 50.0, "F": -20.0},
     ]
 
-    with patch("app.simulate_phase.game", side_effect=game_results) as mock_game:
+    with patch("simulate.simulate_phase.game", side_effect=game_results) as mock_game:
         result = simulate_phase(teams, phase, schedule)
 
     # 各カードを連続2半荘ずつ実行し、カードにないチームを渡していないこと。

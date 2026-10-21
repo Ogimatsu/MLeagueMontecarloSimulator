@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from app.game import game
+from simulate.game import game
 
 TEST_TEAMS = {
     "A": {"point": 0.0, "weight": 1.0},
@@ -17,11 +17,11 @@ def test_determination_of_ranking():
     # チームの重複が無く、1着～4着まで設定できていること
     with (
         patch(
-            "app.game.random.choices",
+            "simulate.game.random.choices",
             side_effect=[["B"], ["D"], ["C"]],
         ),
         patch(
-            "app.game.random.gauss",
+            "simulate.game.random.gauss",
             side_effect=[35000, 20000, 5000],
         ),
     ):
@@ -65,7 +65,7 @@ def test_make_player_scores(scores, expected_calls):
     # 本テストケースでは、得点算出条件を満たしているケースはモックを3回呼び出す
     # また、得点算出条件を満たさず、算出をやり直すケースはモックを6回呼び出す
     with patch(
-        "app.game.random.gauss", side_effect=scores
+        "simulate.game.random.gauss", side_effect=scores
     ) as mock_gauss_point_total_range:
         game(TEST_TEAMS)
         assert mock_gauss_point_total_range.call_count == expected_calls
@@ -74,7 +74,7 @@ def test_make_player_scores(scores, expected_calls):
 def test_m_league_points_total():
     """生成されたMリーグポイントが問題ないこと"""
     # 4人のMリーグポイントの合計が0になること
-    with patch("app.game.random.gauss", side_effect=[35000, 20000, 5000]):
+    with patch("simulate.game.random.gauss", side_effect=[35000, 20000, 5000]):
         test_result = game(TEST_TEAMS)
         assert sum(test_result.values()) == 0
 
@@ -83,11 +83,11 @@ def test_m_league_points():
     """着順とMリーグポイントが正しく割り振られていること"""
     with (
         patch(
-            "app.game.random.choices",
+            "simulate.game.random.choices",
             side_effect=[["B"], ["D"], ["C"]],
         ),
         patch(
-            "app.game.random.gauss",
+            "simulate.game.random.gauss",
             side_effect=[35049, 20049, 5049],
         ),
     ):
