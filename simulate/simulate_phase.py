@@ -1,7 +1,7 @@
 import math
 
 from common import const
-from app.game import game
+from simulate.game import game
 
 
 def round_up(prev_points):

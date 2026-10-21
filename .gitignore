@@ -11,3 +11,6 @@ __pycache__/
 
 # 出力されるCSVファイル
 *.csv
+
+# 復元用チェックポイント
+.ipynb_checkpoints/

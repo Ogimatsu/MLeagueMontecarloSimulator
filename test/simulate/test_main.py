@@ -3,8 +3,8 @@ from decimal import Decimal, ROUND_CEILING
 from unittest.mock import patch
 
 from common import const
-from app.main import main
-from test.test_data.app.test_data_main import (
+from simulate.main import main
+from test.test_data.simulate.test_data_main import (
     FINAL_ORDER_SEASON1,
     FINAL_ORDER_SEASON2,
     FINAL_POINTS_SEASON1,
@@ -153,17 +153,17 @@ def test_main_multi_season():
 
     with (
         patch(
-            "app.main.const.SEASON_COUNT",
+            "simulate.main.const.SEASON_COUNT",
             2,
         ),
         patch(
-            "app.main.create_schedule",
+            "simulate.main.create_schedule",
             side_effect=deepcopy(
                 [REGULAR_SCHEDULE, SEMIFINAL_PLACEHOLDER_SCHEDULE]
             )
         ) as mock_create_schedule,
         patch(
-            "app.main.simulate_phase",
+            "simulate.main.simulate_phase",
             side_effect=fake_simulate_phase,
         ) as mock_simulate_phase,
     ):

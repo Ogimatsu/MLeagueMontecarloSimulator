@@ -3,7 +3,7 @@ from collections import Counter
 import pytest
 
 from common import const
-from app.schedule import create_schedule
+from simulate.schedule import create_schedule
 
 REGULAR_TEAM_NAMES = {
     "Ａチーム",

@@ -22,8 +22,11 @@
 python -m app.main
 ```
 
-指定シーズン数のシミュレーション結果が、カレントディレクトリに`mleague_simulate_result_<日時>.csv`という名前で保存されます。
+指定シーズン数のシミュレーション結果が、`output`フォルダ内に`mleague_simulate_result_<日時>.csv`という名前で保存されます。
 文字コードはUTF-8（BOM付き）で、未進出フェーズの値は空欄になります。
+
+データ分析は、`analyze\analyze.ipynb`を実行して行うことができます。
+`output`フォルダ内に複数のCSVファイルがある場合は、更新日時が最新のCSVファイルに対して分析を行います。
 
 ---
 
@@ -31,12 +34,8 @@ python -m app.main
 
 ```
 MLeagueMontecarloSimulator/
-├── app/                          # シミュレーション本体
-│   ├── __init__.py
-│   ├── game.py                   # 1半荘の処理
-│   ├── main.py                   # シーズンシミュレーション
-│   ├── schedule.py               # 対戦スケジュールの作成
-│   └── simulate_phase.py         # フェーズのシミュレーション
+├── analyze/                      # シミュレーション結果の分析
+│   └── analyze.ipynb             # 集計・可視化用のNotebook
 ├── common/                       # 共通処理
 │   └── const.py                  # 定数
 ├── create_csv/                   # CSV出力処理
@@ -45,23 +44,28 @@ MLeagueMontecarloSimulator/
 ├── docs/
 │   └── specification.md          # 仕様書
 ├── output/                       # 作成したCSVファイルの出力場所
-├── test/                         # テストコード
+├── simulate/                     # シミュレーション本体
 │   ├── __init__.py
-│   ├── app/
+│   ├── game.py                   # 1半荘の処理
+│   ├── main.py                   # シーズンシミュレーション
+│   ├── schedule.py               # 対戦スケジュールの作成
+│   └── simulate_phase.py         # フェーズのシミュレーション
+├── test/                         # テストコード
+│   ├── create_csv/
+│   │   ├── __init__.py
+│   │   └── test_create_csv.py
+│   ├── simulate/
 │   │   ├── __init__.py
 │   │   ├── test_game.py
 │   │   ├── test_main.py
 │   │   ├── test_schedule.py
 │   │   └── test_simulate_phase.py
-│   ├── create_csv/
-│   │   ├── __init__.py
-│   │   └── test_create_csv.py
-│   └── test_data/                # テスト用データ
-│       ├── app/
-│       │   └── test_data_main.py
-│       └── create_csv/
-│           └── test_data_create_csv.py
-├── temp_csv/                     # CSVファイルの一時保存用
+│   ├── test_data/                # テスト用データ
+│   │   ├── create_csv/
+│   │   │   └── test_data_create_csv.py
+│   │   └── simulate/
+│   │       └── test_data_main.py
+│   └── __init__.py
 ├── .gitignore                    # Gitの管理対象外ファイル設定
 ├── .pre-commit-config.yaml       # コミット前の自動チェック設定
 ├── AGENTS.md                     # AIへの作業指示

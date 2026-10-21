@@ -1,6 +1,6 @@
 from common import const
-from app.schedule import create_schedule
-from app.simulate_phase import carry_over_points, simulate_phase
+from simulate.schedule import create_schedule
+from simulate.simulate_phase import carry_over_points, simulate_phase
 from create_csv.create_csv import create_csv
 from copy import deepcopy
 from time import perf_counter
