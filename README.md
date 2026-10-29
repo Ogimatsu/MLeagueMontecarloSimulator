@@ -19,7 +19,7 @@
 [セットアップ](#セットアップ手順ローカル開発環境)後、仮想環境を有効にしてプロジェクトのルートディレクトリで実行します。
 
 ```powershell
-python -m app.main
+python -m simulate.main
 ```
 
 指定シーズン数のシミュレーション結果が、`output`フォルダ内に`mleague_simulate_result_<日時>.csv`という名前で保存されます。
@@ -128,7 +128,7 @@ python -m pytest test
 対象のファイルを指定して実行することもできます。`-s`を付けると、テスト中の標準出力を表示します。
 
 ```powershell
-python -m pytest -s test/app/test_main.py
+python -m pytest -s test/simulate/test_main.py
 ```
 
 ### コミット前のチェック
