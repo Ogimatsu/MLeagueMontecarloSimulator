@@ -48,14 +48,8 @@ def main():
     )
 
     # セミファイナルのスケジュールについても、予めデフォルトのチーム名で作成する
-    semifinal_teams_default = [
-        "REGULAR_1",
-        "REGULAR_2",
-        "REGULAR_3",
-        "REGULAR_4",
-        "REGULAR_5",
-        "REGULAR_6",
-    ]
+    semifinal_teams_default = [f"REGULAR_{i}" for i in range(1, const.SEMIFINAL_TEAM_COUNT + 1)]
+
     semifinal_schedule_template = create_schedule(
         const.SEMIFINAL_GAMES_PER_TEAM, const.SEMIFINAL_TEAM_COUNT, semifinal_teams_default
     )
